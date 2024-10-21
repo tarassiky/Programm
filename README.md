@@ -2,6 +2,7 @@
 
 Лабораторная № 1
 
-
+https://github.com/tarassiky/Programm/tree/42df4735f3d1793dd3b07dcd3cf46f1d6234039b/%D0%9B%D0%B0%D0%B1%D0%BE%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%BD%D0%B0%D1%8F%20%E2%84%961
 
 Лабораторная № 2
+

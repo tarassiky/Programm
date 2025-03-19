@@ -104,17 +104,15 @@ def power_of_four(x):
 
 # Пример добавления данных в базу данных
 cursor = db_conn.cursor()
-cursor.execute("INSERT INTO function_log (timestamp, function_name, parameters, outcome) VALUES ('2024-01-01', 'example', '2', '4')")
+cursor.execute("INSERT INTO function_log (timestamp, function_name, parameters, outcome) VALUES ('2025-01-01', 'example', '2', '4')")
 db_conn.commit()
 
 # Вызовы функций
-increase(5)  # Изменено значение
-decrease(12) # Изменено значение
-power_of_three(4) # Изменено значение
-power_of_four(7) # Изменено значение
+increase(5) 
+decrease(12)
+power_of_three(4)
+power_of_four(7)
 
-# Вывод логов из базы данных
 display_logs(db_conn)
 
-# Закрытие соединения с базой данных
 db_conn.close()

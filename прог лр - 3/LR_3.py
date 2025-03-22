@@ -7,9 +7,7 @@ from datetime import datetime
 
 #  Декоратор для отслеживания вызовов функций
 def call_tracer(func=None, *, log_destination=sys.stdout):
-    """
-    Параметризованный декоратор для логирования вызовов функций.
-    """
+
     print("func - > ", func)
     if func is None:
         return lambda func: call_tracer(func, log_destination=log_destination)
@@ -28,9 +26,21 @@ def call_tracer(func=None, *, log_destination=sys.stdout):
             }
 
             if isinstance(log_destination, str) and log_destination.endswith('.json'):
-                with open(log_destination, 'a+') as log_file:
-                    json.dump(log_data, log_file, indent=4)
-                    log_file.write('\n')
+                # Записываем JSON-объекты в список, а потом записываем весь список в файл
+                try:
+                    with open(log_destination, 'r') as log_file:
+                        try:
+                            all_logs = json.load(log_file)
+                        except json.JSONDecodeError:
+                            all_logs = []  # Если файл пустой или содержит невалидный JSON
+                except FileNotFoundError:
+                    all_logs = []
+
+                all_logs.append(log_data)
+
+                with open(log_destination, 'w') as log_file:
+                    json.dump(all_logs, log_file, indent=4)
+
             elif isinstance(log_destination, sqlite3.Connection):
                 cursor = log_destination.cursor()
                 cursor.execute('''INSERT INTO function_log(timestamp, function_name, parameters, outcome) 
@@ -81,13 +91,13 @@ def increase(x):
     return x + 1
 
 
-@call_tracer(log_destination=sys.stdout)  # Логирование в stdout
+@call_tracer(log_destination='logger.json')  # Логирование в JSON-файл (logger.json)
 def decrease(x):
     """Уменьшает число на 1."""
     return x - 1
 
 
-@call_tracer(log_destination='log_data.json')  # Логирование в JSON-файл
+@call_tracer(log_destination='log_data.json')  # Логирование в JSON-файл (log_data.json)
 def power_of_three(x):
     return x ** 3
 
@@ -104,11 +114,10 @@ def power_of_four(x):
 
 # Пример добавления данных в базу данных
 cursor = db_conn.cursor()
-cursor.execute("INSERT INTO function_log (timestamp, function_name, parameters, outcome) VALUES ('2025-01-01', 'example', '2', '4')")
+cursor.execute("INSERT INTO function_log (timestamp, function_name, parameters, outcome) VALUES ('2024-01-01', 'example', '2', '4')")
 db_conn.commit()
 
-# Вызовы функций
-increase(5) 
+increase(5)
 decrease(12)
 power_of_three(4)
 power_of_four(7)

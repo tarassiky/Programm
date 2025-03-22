@@ -1,16 +1,10 @@
-{
-    "datetime": "2025-03-18 17:40:23",
-    "func_name": "f3",
-    "params": [
-        30
-    ],
-    "result": 27000
-}
-{
-    "datetime": "2025-03-18T17:42:45.710749",
-    "func_name": "f3",
-    "params": [
-        3
-    ],
-    "result": 27
-}
+[
+    {
+        "timestamp": "2025-03-22 09:41:00",
+        "function_name": "decrease",
+        "parameters": [
+            12
+        ],
+        "outcome": 11
+    }
+]

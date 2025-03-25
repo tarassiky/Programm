@@ -31,16 +31,19 @@ def trace(func=None, *, handle=sys.stdout):
             elif isinstance(handle, sqlite3.Connection):
                 # Внутри декоратора создаем таблицу, если она не существует
                 cursor = handle.cursor()
-                cursor.execute('''CREATE TABLE IF NOT EXISTS logtable (
-                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    datetime TEXT,
-                                    func_name TEXT,
-                                    params TEXT,
-                                    result TEXT
-                                )''')
-                cursor.execute('''INSERT INTO logtable(datetime, func_name, params, result) 
-                                  VALUES (?, ?, ?, ?)''',
-                               (now, func.__name__, str(args), str(result)))
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS logtable (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        datetime TEXT,
+                        func_name TEXT,
+                        params TEXT,
+                        result TEXT
+                    )
+                ''')
+                cursor.execute('''
+                    INSERT INTO logtable(datetime, func_name, params, result) 
+                    VALUES (?, ?, ?, ?)
+                ''', (now, func.__name__, str(args), str(result)))
                 handle.commit()
             else:
                 handle.write(f'{data}\n')
@@ -53,8 +56,13 @@ def trace(func=None, *, handle=sys.stdout):
 
 
 @contextmanager
-def dbc():
-    con = sqlite3.connect(':memory:')
+def dbc(filename=":memory:"):
+    """
+    Контекстный менеджер для подключения к базе данных SQLite.
+    По умолчанию подключаемся к базе данных в памяти.
+    Можно передать путь к файлу базы данных.
+    """
+    con = sqlite3.connect(filename)
     try:
         yield con
     finally:
@@ -78,20 +86,25 @@ def power_of_three(x):
     return x ** 3
 
 
-with dbc() as con:
-    @trace(handle=con)
-    def power_of_four(x):
-        return x ** 4
+def main():
+    with dbc("example.db") as con:
+        @trace(handle=con)
+        def power_of_four(x):
+            return x ** 4
 
-    increase(5)
-    decrease(12)
-    power_of_three(4)
-    power_of_four(7)
+        increase(5)
+        decrease(12)
+        power_of_three(4)
+        power_of_four(7)
 
-    cursor = con.cursor()
-    cursor.execute('SELECT * FROM logtable')
-    for row in cursor.fetchall():
-        print(row)
+        cursor = con.cursor()
+        cursor.execute('SELECT * FROM logtable')
+        for row in cursor.fetchall():
+            print(row)
 
-    # Вызов функции power_of_four внутри блока with
-    print(power_of_four(10))
+        # Вызов функции power_of_four внутри блока with
+        print(power_of_four(10))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,34 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Курсы валют ЦБ РФ</title>
+    <style>
+        table { border-collapse: collapse; width: 50%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        h1 { text-align: center; }
+        .update-info { text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Курсы валют ЦБ РФ</h1>
+    <table>
+        <tr>
+            <th>Валюта</th>
+            <th>Курс (руб.)</th>
+        </tr>
+        {% for currency, rate in rates.items() %}
+        {% if currency != 'date' %}
+        <tr>
+            <td>{{ currency }}</td>
+            <td>{{ rate }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    <div class="update-info">
+        <p>Дата обновления: {{ rates['date'] }}</p>
+    </div>
+</body>
+</html>

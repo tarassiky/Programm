@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Term List</title>
+</head>
+<body>
+    <h1>Terms</h1>
+    <ul>
+        {% for term in terms %}
+        <li>{{ term.term }} - {{ term.definition }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
